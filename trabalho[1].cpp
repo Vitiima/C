@@ -290,42 +290,85 @@ bool verifyMovement(Pile& currentPile, Pile& adressPile)
     return false; 
 }
 
+bool moveCard(Pile& sourcePile, Pile& destinationPile)
+{
+    card selectedCard, destinationCard;
+
+    if (sourcePile.Empty())
+    {
+        std::cout << "a pilha esta vazia." << std::endl;
+        return false;
+    }
+
+    sourcePile.Top(selectedCard);
+
+    if (!destinationPile.Empty())
+    {
+        destinationPile.Top(destinationCard);
+
+        // Verifique se o movimento é válido
+        if (!verifyMovement(selectedCard, destinationCard))
+        {
+            std::cout << "movimento inválido." << std::endl;
+            return false;
+        }
+    }
+
+    // Movimente a carta
+    sourcePile.pop(selectedCard);
+    destinationPile.Push(selectedCard);
+
+    return true;
+}
+
+
 int main() {
 
 int play, adress;
 Pile currentPile, adressPile;
 Pile gamePiles[] = {pilha1, pilha2, pilha3, pilha4, pilha5, pilha6, pilha7, pilha8}; // organiza a pilha em ordem e enumera elas
 
-do{
-    Regras_Freecell();
-    card::freeCellsMaker(deck, freeCells);
-    card::printDeck(deck);
-    std::cout << "\n\nJogada: \n\n";
-    std::cin >> play;
-    if (play == 99)
+do
     {
-        system("cls");
-        std::cout << "Jogo terminado!";
-        abort();
-    }
-    std::cin >> adress;
+        Regras_Freecell();
+        card::freeCellsMaker(deck, freeCells);
+        card::printDeck(deck);
+        std::cout << "\n\nJogada: \n\n";
+        std::cin >> play;
+        if (play == 99){
+            system("cls");
+            std::cout << "Jogo Encerrado";
+            break;
+        }
 
-    // caso a jogada esteja fora de 1 a 8 ele invalida a jogada para que não saia das pilhas
-    if (play < 1 || play > 8 || adress < 1 || adress > 8){
-    std::cout << "\nEscolha de pilha inválida!\n";
-    continue; // cancela a jogada e mostra que é invalida
-    }
+        if (play >= 1 && play <= 8){
+            std::cout << "para qual monte enviar a carta? (1 a 8) selecione 0 para cancelar"endl;
+            std::cin >> adress;
 
-    currentPile = gamePiles[play - 1];
-    adressPile = gamePiles[adress - 1];
+            if (adress == 0) {
+                std::cout << "cancelado." << std::endl;
+                continue;
+            }
 
-    bool verify = verifyMovement(currentPile, adressPile);
-    if (!verify){
-    std::cout << "\nMovimento inválido!\n";
+            if (adress >= 1 && adress <= 8){
+                if (!moveCard(gamePiles[play - 1], gamePiles[adress - 1]))
+                {
+                    std::cout << "acao invalido." << std::endl;
+                }
+            }
+            else{
+                std::cout << "monte invalido." << std::endl;
+            }
+        }
+
+    } while (play != 99);
+
+    system("pause");
+    return 0;
 }
-}
-while (play != 99);
-}
+
+
+
 
 
 
